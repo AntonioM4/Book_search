@@ -1,11 +1,16 @@
+// TODO Use the Apollo useMutation hook to execute SAVE BOOK mutation in handleSaveBook function instead of saveBook function
 import React, { useState, useEffect } from 'react';
 import { Jumbotron, Container, Col, Form, Button, Card, CardColumns } from 'react-bootstrap';
-
 import Auth from '../utils/auth';
-import { saveBook, searchGoogleBooks } from '../utils/API';
+import { searchGoogleBooks } from '../utils/API';
 import { saveBookIds, getSavedBookIds } from '../utils/localStorage';
+// TODO import files from queries.js
+import { useMutation } from '@apollo/client';
+import { SAVE_BOOK } from '../utils/mutations';
+// import { removeBookId } from '../utils/localStorage';
 
 const SearchBooks = () => {
+  const [saveBook] = useMutation(SAVE_BOOK);
   // create state for holding returned google api data
   const [searchedBooks, setSearchedBooks] = useState([]);
   // create state for holding our search field data
@@ -54,6 +59,7 @@ const SearchBooks = () => {
 
   // create function to handle saving a book to our database
   const handleSaveBook = async (bookId) => {
+    // const [saveBook, { error, data }] = useMutation(SAVE_BOOK);
     // find the book in `searchedBooks` state by the matching id
     const bookToSave = searchedBooks.find((book) => book.bookId === bookId);
 
@@ -65,18 +71,30 @@ const SearchBooks = () => {
     }
 
     try {
-      const response = await saveBook(bookToSave, token);
-
-      if (!response.ok) {
-        throw new Error('something went wrong!');
+      // const response = await saveBook(bookToSave, token);
+      const { data } = await saveBook({
+        variables: { ...bookToSave }
+      })
+      if (data) {
+        setSavedBookIds([...savedBookIds, bookToSave.bookId]);
       }
-
-      // if book successfully saves to user's account, save book id to state
-      setSavedBookIds([...savedBookIds, bookToSave.bookId]);
-    } catch (err) {
-      console.error(err);
+    } catch (error) {
+      console.error(error);
     }
   };
+
+  // if (!response.ok) {
+  //   throw new Error('something went wrong!');
+  // }
+
+
+  // if book successfully saves to user's account, save book id to state
+  // copy this part and move it up
+  //   setSavedBookIds([...savedBookIds, bookToSave.bookId]);
+  // } catch (err) {
+  //   console.error(err);
+  // }
+  // };
 
   return (
     <>
