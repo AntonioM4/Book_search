@@ -1,21 +1,44 @@
-const express = require('express');
-const path = require('path');
-const db = require('./config/connection');
-const routes = require('./routes');
+// TODO update auth middleware function to work with GraphQL API, look at class activities
+const jwt = require('jsonwebtoken');
 
-const app = express();
-const PORT = process.env.PORT || 3001;
+// set token secret and expiration date
+const secret = 'mysecretsshhhhh';
+const expiration = '2h';
 
-app.use(express.urlencoded({ extended: true }));
-app.use(express.json());
+module.exports = {
+  // signToken: function ({ username, email, _id }) {
+  //   const payload = { username, email, _id };
+  //   return jwt.sign({ data: payload }, secret, { expiresIn: expiration });
+  // },
+  // function for our authenticated routes
+  authMiddleware: function ({ req }) {
 
-// if we're in production, serve client/build as static assets
-if (process.env.NODE_ENV === 'production') {
-  app.use(express.static(path.join(__dirname, '../client/build')));
-}
+    // allows token to be sent via  req.query or headers
+    let token = req.body.token || req.query.token || req.headers.authorization;
 
-app.use(routes);
+    // ["Bearer", "<tokenvalue>"]
+    if (req.headers.authorization) {
+      token = token.split(' ').pop().trim();
+    }
 
-db.once('open', () => {
-  app.listen(PORT, () => console.log(`🌍 Now listening on localhost:${PORT}`));
-});
+    if (!token) {
+      return req;
+    }
+
+    // verify token and get user data out of it
+    try {
+      const { data } = jwt.verify(token, secret, { maxAge: expiration });
+      req.user = data;
+    } catch {
+      console.log('Invalid token');
+    }
+
+    // send to next endpoint
+    return req;
+  },
+  signToken: function ({ username, email, _id }) {
+    const payload = { username, email, _id };
+
+    return jwt.sign({ data: payload }, secret, { expiresIn: expiration });
+  },
+};
