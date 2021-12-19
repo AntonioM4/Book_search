@@ -61,3 +61,4 @@ const resolvers = {
 };
 
 module.exports = resovlers;
+module.exports = router;

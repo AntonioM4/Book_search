@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+module.exports = router;
 // testing comment
 console.log("testing comment");
 mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost/Book_search', {

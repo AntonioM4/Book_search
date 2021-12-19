@@ -2,7 +2,6 @@ const express = require("express");
 const path = require("path");
 // const db = require('./config/connection');
 const routes = require("./routes");
-module.exports = router;
 
 //Unit 21, Activity #2:
 // Import the ApolloServer class
@@ -54,3 +53,5 @@ db.once("open", () => {
     console.log(`Use GraphQL at http://localhost:${PORT}${server.graphqlPath}`);
   });
 });
+
+module.exports = router;

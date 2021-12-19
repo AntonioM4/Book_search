@@ -1,4 +1,5 @@
 const jwt = require("jsonwebtoken");
+module.exports = router;
 
 // set token secret and expiration date
 const secret = "mysecretsshhhhh";
