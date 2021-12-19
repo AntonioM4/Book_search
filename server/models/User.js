@@ -1,6 +1,5 @@
 const { Schema, model } = require('mongoose');
 const bcrypt = require('bcrypt');
-module.exports = router;
 // import schema from Book.js
 const bookSchema = require('./Book');
 
