@@ -1,6 +1,3 @@
-//define the query and mutation functionality to wrok with the Mongoose models
-//**hint**: Use the functionality in the 'user-controller.js' as a guide
-
 //Unit #21, Act. #12 and #26 reference for resolvers
 const { User, Book } = require("../models");
 const { signToken } = require("../utils/auth");
@@ -61,4 +58,3 @@ const resolvers = {
 };
 
 module.exports = resovlers;
-module.exports = router;
